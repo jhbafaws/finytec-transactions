@@ -40,10 +40,12 @@ public class FinytecTransactionsApplication {
     @Autowired
     private RestHighLevelClient client;
 
-
+    public static void main(String[] args) {
+        SpringApplication.run(FinytecTransactionsApplication.class, args);
+    }
 
     @KafkaListener(topics = "finytec-transactions", groupId = "finytecGroup", containerFactory = "kafkaListenerContainerFactory")
-    public void listen(List<ConsumerRecord<String, String>> messages) throws JsonProcessingException , JsonMappingException {
+    public void listen(List<ConsumerRecord<String, String>> messages) throws JsonProcessingException, JsonMappingException {
         for (ConsumerRecord<String, String> message : messages) {
             //          FinytecTransaction transaction =  mapper.readValue(message.value(), FinytecTransaction.class );
 //            log.info("Partition = {} Offset = {} key = {} Message = {}",
@@ -80,7 +82,6 @@ public class FinytecTransactionsApplication {
         Faker faker = new Faker();
         for (int i = 0; i < 10000; i++) {
             FinytecTransaction transaction = new FinytecTransaction();
-
             transaction.setName(faker.name().name());
             transaction.setLastName(faker.name().lastName());
             transaction.setUserName(faker.name().username());
@@ -88,10 +89,6 @@ public class FinytecTransactionsApplication {
 
             kafkaTemplate.send("finytec-transactions", transaction.getUserName(), mapper.writeValueAsString(transaction));
         }
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(FinytecTransactionsApplication.class, args);
     }
 
 //    @Override
